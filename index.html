@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Snake Game</title>
+    <style>
+        #gameCanvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <script>
+        // Get the canvas element and its context
+        var canvas = document.getElementById("gameCanvas");
+        var ctx = canvas.getContext("2d");
+        
+        // Snake properties
+        var snakeSize = 20;
+        var snake = [{ x: 20, y: 20 }];
+        var dx = snakeSize;
+        var dy = 0;
+        
+        // Ball properties
+        var ballSize = 20;
+        var ball = { x: 200, y: 200 };
+        
+        // Game loop
+        function gameLoop() {
+            clearCanvas();
+            moveSnake();
+            drawSnake();
+            drawBall();
+            
+            if (isCollision()) {
+                // Handle collision
+                resetGame();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Clear the canvas
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // Move the snake
+        function moveSnake() {
+            var head = { x: snake[0].x + dx, y: snake[0].y + dy };
+            snake.unshift(head);
+            snake.pop();
+        }
+        
+        // Draw the snake
+        function drawSnake() {
+            snake.forEach(function (segment) {
+                ctx.fillStyle = "green";
+                ctx.fillRect(segment.x, segment.y, snakeSize, snakeSize);
+            });
+        }
+        
+        // Draw the ball
+        function drawBall() {
+            ctx.fillStyle = "red";
+            ctx.fillRect(ball.x, ball.y, ballSize, ballSize);
+        }
+        
+        // Check for collision with the ball
+        function isCollision() {
+            var head = snake[0];
+            if (head.x < ball.x + ballSize &&
+                head.x + snakeSize > ball.x &&
+                head.y < ball.y + ballSize &&
+                head.y + snakeSize > ball.y) {
+                return true;
+            }
+            return false;
+        }
+        
+        // Reset the game
+        function resetGame() {
+            snake = [{ x: 20, y: 20 }];
+        }
+        
+        // Handle keydown events
+        document.addEventListener("keydown", function (event) {
+            switch (event.keyCode) {
+                case 37: // Left arrow key
+                    dx = -snakeSize;
+                    dy = 0;
+                    break;
+                case 38: // Up arrow key
+                    dx = 0;
+                    dy = -snakeSize;
+                    break;
+                case 39: // Right arrow key
+                    dx = snakeSize;
+                    dy = 0;
+                    break;
+                case 40: // Down arrow key
+                    dx = 0;
+                    dy = snakeSize;
+                    break;
+            }
+        });
+        
+        // Start the game loop
+        gameLoop();
+    </script>
+</body>
+</html>
